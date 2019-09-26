@@ -1,0 +1,14 @@
+body {
+  background-color: white;
+}
+h1 {
+  color: green;
+}
+p {
+  color: red;
+}
+canvas {
+  border: 5px solid;
+  border-color: black;
+  color: white;
+}

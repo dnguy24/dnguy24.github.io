@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
     <meta charset="utf-8">
-    <title>Flask Tutorial</title>
+    <title>Visualizer</title>
   </head>
   <body>
-
-    <h1> My First Try Using Flask </h1>
-    <p> Flask is Fun </p>
+    
+    <button onclick="ditmemay()" id="button">Positive examples</button>
+    <button onclick="start(this)" id="button3">Start</button>
+    <button onclick="svm()" id="startsvm">SVM</button>
+    <canvas height="400" width="600" id="mycanvas"></canvas>
+    <div id="canvas" style="width: 600x; height: 400px;"></div>
+    <h1 id="demo"></h1>
+    <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/nicolaspanel/numjs@0.15.1/dist/numjs.min.js"></script>
+    <script type="text/javascript" src="js/svm.js"></script>
+    <script type="text/javascript" src="js/main.js"> </script>
   </body>
 </html>
