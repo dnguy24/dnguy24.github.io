@@ -31,7 +31,7 @@ function start(button){
         for(var i=0, len=features.length; i<len; i++){
             if(labels[i]==1){
                 console.log("drawing");
-                drawCircle(features[i][0], features[i][1], "green");
+                drawCircle(features[i][0], features[i][1], "blue");
             }else if(labels[i]==-1){
                 console.log("drawing");
                 drawCircle(features[i][0], features[i][1], "red");
@@ -62,9 +62,9 @@ function start(button){
             features.push([x, y]);
             if(positive==true){
                 labels.push(1);
-                drawCircle(x, y,"green");
+                drawCircle(x, y,"blue");
                 console.log("pos: ", x, y);
-                print(x+" "+y, "green");
+                print(x+" "+y, "blue");
             }if(positive==false){
                 labels.push(-1);
                 drawCircle(x, y, "red");
@@ -91,49 +91,50 @@ function cut(){
     sm = create(features);
     gameLoop();
     function gameLoop(){
-        if(sm.x < sm.limit-1){
+        if(sm.x < sm.limit){
             console.log(sm.x)
             window.requestAnimationFrame(gameLoop);
             sm.drawsvm();
             sm.update();
         }else{
-        console.log("drawing best");
-        ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
-        var loz = [];    
-        for(var i=0; i<c.clientWidth; i++){
-            for(var j=0; j<c.clientHeight; j++){
-                loz.push([i,j]);
-            }
-        }
-        var results = sm.svm.predict(loz);
-        for(var i=0; i<loz.length; i++){
-            var z = results[i];
-            if(z==-1){
-                ctx.fillStyle = "LightCoral";
-                ctx.fillRect(loz[i][0], loz[i][1], 1,1);
-            }else if(z==1){
-                ctx.fillStyle = "LightGreen";
-                ctx.fillRect(loz[i][0], loz[i][1], 1,1);
-            }
-        }
-        for(var i=0, len=features.length; i<len; i++){
-            if(labels[i]==1){
-                drawCircle(features[i][0], features[i][1], "green");
-            }else if(labels[i]==-1){
-                drawCircle(features[i][0], features[i][1], "red");
-            }
-        }
-        console.log("done");
+        //     sm.x-=1;
+        //     console.log("here");
+        //     sm.drawsvm();
+        // console.log("drawing best");
+        // ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
+        // var loz = [];    
+        // for(var i=0; i<c.clientWidth; i++){
+        //     for(var j=0; j<c.clientHeight; j++){
+        //         var z = sm.svm.predictOne([i, j]);
+        //         if(z==-1){
+        //             ctx.fillStyle = "LightCoral";
+        //             ctx.fillRect(i, j, 1,1);
+        //         }else if(z==1){
+        //             ctx.fillStyle = "LightBlue";
+        //             ctx.fillRect(i, j, 1,1);
+        //         }            }
+        // }
+        // console.log(sm.svm.getWeights())
+        // for(var i=0, len=features.length; i<len; i++){
+        //     if(labels[i]==1){
+        //         drawCircle(features[i][0], features[i][1], "blue");
+        //     }else if(labels[i]==-1){
+        //         drawCircle(features[i][0], features[i][1], "red");
+        //     }
+        // }
+        // console.log("done");
         }
     }
 }
 
 function create(features){
     var that = {};
-    var svm = new svmjs.SVM();
-    svm.train(features, labels, {kernel: 'rbf', rbfsigma: 20, C:1});
+    var svm = new SVM;
+    svm.train(features, labels);
     console.log(features);
     console.log(svm.getWeights());
+    console.log(svm.getalpha())
+    console.log("fi to")
     console.log(svm.predict(features));
     var weights = svm.getallW();
     console.log(weights.length);
@@ -141,42 +142,42 @@ function create(features){
     var tickperframe = 1;
     var tickcount = 0;
     var x = 0;
+    var weights = svm.getallW();
+    var alphas = svm.getallAlpha();
+
     that.limit = weights.length;
-    that.x = x;
+    that.x = 0;
     that.svm = svm;
     that.drawsvm = function(){
-
+        console.log("x in draw:"+that.x)
         ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);    
-        var weights = svm.getallW();
-        var alphas = svm.getallAlpha();
+        console.log(alphas);
         for(var i=0; i<c.clientWidth; i++){
             for(var j=0; j<c.clientHeight; j++){
-                var z = svm.fakepredictOne(weights[x], alphas[x], [i, j]);
+                var z = svm.testpredictOne(weights[that.x], alphas[that.x], [i, j]);
                 if(z==-1){
                     ctx.fillStyle = "LightCoral";
                     ctx.fillRect(i, j, 1,1);
                 }else if(z==1){
-                    ctx.fillStyle = "LightGreen";
+                    ctx.fillStyle = "LightBlue";
                     ctx.fillRect(i, j, 1,1);
                 }
             }
         }
         for(var i=0, len=features.length; i<len; i++){
             if(labels[i]==1){
-                drawCircle(features[i][0], features[i][1], "green");
+                drawCircle(features[i][0], features[i][1], "blue");
             }else if(labels[i]==-1){
                 drawCircle(features[i][0], features[i][1], "red");
             }
         }
-        console.log(weights[x]);
     }
 
     that.update = function(){
-        that.x = x;
         tickcount+=1;
-        if(tickcount > tickperframe && x < svm.getallW().length){
+        if(tickcount > tickperframe){
             tickcount = 0;
-            x+=1;
+            that.x+=1;
         }
     }
     return that;

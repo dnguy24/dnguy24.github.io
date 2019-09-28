@@ -221,7 +221,7 @@ var svmjs = (function(exports){
         }
         return f;
       },
-      fakepredictOne: function(weight, alphas, inst){
+      testpredictOne: function(weight, alphas, inst){
         return this.fakemarginOne(weight, alphas, inst) > 0 ? 1 : -1;
       },
       marginOne: function(inst) {
