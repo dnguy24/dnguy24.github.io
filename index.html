@@ -6,12 +6,18 @@
     <title>Visualizer</title>
   </head>
   <body>
-    
-    <button onclick="ditmemay()" id="button">Positive examples</button>
+  <div>
+    <h1 id="header">Press Start to Begin Drawing</h1>
+    <canvas height="400" width="600" id="mycanvas"></canvas>
+  </div>
+  <div>
+    <button onclick="ditmemay()" id="button">Change Color</button>
     <button onclick="start(this)" id="button3">Start</button>
     <button onclick="cut()" id="startsvm">SVM</button>
-    <canvas height="400" width="600" id="mycanvas"></canvas>
-    <h1 id="demo"></h1>
+    <button onclick="clearcanvas()" id="clear">Clear</button>
+    <p id="demo"></p>
+  </div>
+    
     <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/nicolaspanel/numjs@0.15.1/dist/numjs.min.js"></script>
     <script type="text/javascript" src="js/svm.js"></script>

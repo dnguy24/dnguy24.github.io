@@ -1,8 +1,21 @@
 body {
-  background-color: white;
+  font-family: "Times New Roman", Times, serif;
+  color: #333;
+  padding: 20px;
 }
 h1 {
-  color: green;
+  font-style: italic;
+
+  color: black;
+}
+button
+{
+  font-family: "Times New Roman", Times, serif;
+	display:inline-block;
+	border-radius:13px;
+	height:30px;
+	width:150px;
+	font-size:12px;
 }
 p {
   color: red;
