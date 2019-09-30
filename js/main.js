@@ -113,8 +113,8 @@ function getCol(matrix, col){
     return column;
 }
 
-function createSVM(){
-    sm = create(features);
+function create(){
+    sm = createSVM(features);
     gameLoop();
     function gameLoop(){
         if(sm.x < sm.limit){
@@ -150,7 +150,7 @@ function createSVM(){
     }
 }
 
-function create(features){
+function createSVM(features){
     var that = {};
     var svm = new SVM;
     svm.train(features, labels, {kernel: "rbf", C:10, sigma: 27});
