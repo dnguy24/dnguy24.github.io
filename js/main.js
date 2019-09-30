@@ -3,7 +3,7 @@ var positive = false;
 // function onload(){
 //     document.getElementById("header").innerHTML = "Press Start to begin drawing";
 // }
-function ditmemay(){
+function changedrawing(){
     if(start1==true){
         if(positive==false){ positive = true; print("Drawing Positive examples", "Blue")}
         else if(positive==true){ positive=false; print("Drawing Negative examples", "Red")};
@@ -113,7 +113,7 @@ function getCol(matrix, col){
     return column;
 }
 
-function cut(){
+function createSVM(){
     sm = create(features);
     gameLoop();
     function gameLoop(){
