@@ -67,6 +67,7 @@ function start(button){
         start1 = true;
         console.log("start: ", start1)
         button.innerText = "Stop";
+        document.getElementById("header").innerHTML = "Change the kernel sigma and press Start"
         start2 = true;
     }else{
         start1 = false;
@@ -123,7 +124,6 @@ function create(){
             sm.drawsvm();
             sm.update();
         }else{
-        console.log("drawing best");
         ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
         var loz = [];    
         for(var i=0; i<c.clientWidth; i++){
@@ -137,7 +137,6 @@ function create(){
                     ctx.fillRect(i, j, 1,1);
                 }            }
         }
-        console.log(sm.svm.getWeights())
         for(var i=0, len=features.length; i<len; i++){
             if(labels[i]==1){
                 drawCircle(features[i][0], features[i][1], "blue");
@@ -149,23 +148,45 @@ function create(){
         }
     }
 }
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo1");
+output.innerHTML = "RBF Kernel Sigma: "+slider.value; // Display the default slider value
 
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+    output.innerHTML = "RBF Kernel Sigma: "+this.value;
+    if(start1==true){
+        sm = createSVM(features);
+        ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
+            for(var i=0; i<c.clientWidth; i++){
+                for(var j=0; j<c.clientHeight; j++){
+                    var z = sm.svm.predictOne([i, j]);
+                    if(z==-1){
+                        ctx.fillStyle = "LightCoral";
+                        ctx.fillRect(i, j, 1,1);
+                    }else if(z==1){
+                        ctx.fillStyle = "LightBlue";
+                        ctx.fillRect(i, j, 1,1);
+                    }            }
+            }
+            for(var i=0, len=features.length; i<len; i++){
+                if(labels[i]==1){
+                    drawCircle(features[i][0], features[i][1], "blue");
+                }else if(labels[i]==-1){
+                    drawCircle(features[i][0], features[i][1], "red");
+                }
+            }
+        }
+}
 function createSVM(features){
     var that = {};
     var svm = new SVM;
-    svm.train(features, labels, {kernel: "rbf", C:10, sigma: 27});
-    console.log(features);
-    console.log(svm.getWeights());
-    console.log(svm.getalpha())
-    console.log("fi to")
-    console.log(svm.predict(features));
+    svm.train(features, labels, {kernel: "rbf", C:10, sigma: slider.value});
     var weights = svm.getallW();
-    console.log(weights.length);
     var updateforx = Math.floor(weights.length/20);
     if(weights.length <= 20){
         updateforx = 1;
     }
-    console.log(weights);
     var tickperframe = 1;
     var tickcount = 0;
     var x = 0;
@@ -176,9 +197,7 @@ function createSVM(features){
     that.x = 0;
     that.svm = svm;
     that.drawsvm = function(){
-        console.log("x in draw:"+that.x)
         ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);    
-        // console.log(alphas);
         for(var i=0; i<c.clientWidth; i++){
             for(var j=0; j<c.clientHeight; j++){
                 var z = svm.testpredictOne(weights[that.x], alphas[that.x], [i, j]);
