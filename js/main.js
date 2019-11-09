@@ -26,10 +26,10 @@ var features = [
     [297, 251],
     [364, 310],
     [407, 167]
-    // -1, -1, -1, 1, 1, 1
-    // -1, -1, -1, 1, 1
 ];
-var labels = [-1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1];
+var labels = [
+    -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1
+];
 var start1 = false;
 var start2 = false;
 c.addEventListener("mousedown", function(e){
@@ -48,8 +48,47 @@ function update(){
         }
     }
 }
+var dropdown = document.getElementById("kernelselection")
+var kernel = "rbf"
+dropdown.oninput = function(){
+    kernel = dropdown.options[dropdown.selectedIndex].value;
+    if(kernel == "linear" ){
+        slider.style.display = "none";
+        document.getElementById("demo1").style.display = "none";
+    }else{
+        slider.style.display = "block";
+        document.getElementById("demo1").style.display = "block";
+    }
+
+}
+function circledata(){
+    this.features = []
+    this.labels = []
+    for(var i=0; i < 100; i++){
+        var radius = Math.random()*60;
+        var angle = Math.random()*Math.PI*2;
+        var x = parseInt(Math.cos(angle)*radius);
+        var y = parseInt(Math.sin(angle)*radius);
+        x+=c.clientWidth/2;
+        y+=c.clientHeight/2;
+        features.push([x, y])
+        labels.push(-1);
+    }
+    for(var i=0; i < 50; i++){
+        var radius = Math.random()*30+100;
+        var angle = Math.random()*Math.PI*2;
+        var x = parseInt(Math.cos(angle)*radius);
+        var y = parseInt(Math.sin(angle)*radius);
+        x+=c.clientWidth/2;
+        y+=c.clientHeight/2;
+        features.push([x, y])
+        labels.push(1);
+    }
+    update();
+}
 function clearcanvas(){
     console.log("clearing")
+    stop = true;
     this.features = [];
     console.log(features);
     this.labels = [];
@@ -62,6 +101,7 @@ function start(button){
         }else if(positive == true){
             print("Drawing Positive Examples", "Blue")
         }
+        // circledata();
         update();
         console.log(features);
         start1 = true;
@@ -70,14 +110,13 @@ function start(button){
         document.getElementById("header").innerHTML = "Change the kernel sigma and press Start"
         start2 = true;
     }else{
+        stop = true;
         start1 = false;
         button.innerText = "Start";
         var str = "";
         for(var i=0; i<labels.length; i++){
             str+=labels[i]+", ";
         }
-        console.log(str);
-        console.log(features);
         if(start2 == true){
         }
     }
@@ -113,19 +152,23 @@ function getCol(matrix, col){
     }
     return column;
 }
+var stop = false;
 
 function create(){
+    stop = false;
     sm = createSVM(features);
     gameLoop();
     function gameLoop(){
-        if(sm.x < sm.limit){
-            // console.log(sm.x)
+        if(sm.x < sm.limit && stop==false){
+            console.log(sm.x)
+            document.getElementById("status").innerHTML = "Iteration: "+sm.x
             window.requestAnimationFrame(gameLoop);
             sm.drawsvm();
             sm.update();
-        }else{
+        }else if(stop==false){
         ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
-        var loz = [];    
+        var loz = [];
+        document.getElementById("status").innerHTML = "Converged after: "+sm.limit + " iterations";    
         for(var i=0; i<c.clientWidth; i++){
             for(var j=0; j<c.clientHeight; j++){
                 var z = sm.svm.predictOne([i, j]);
@@ -153,8 +196,10 @@ var output = document.getElementById("demo1");
 output.innerHTML = "RBF Kernel Sigma: "+slider.value; // Display the default slider value
 
 // Update the current slider value (each time you drag the slider handle)
-slider.oninput = function() {
+slider.oninput = function(){
     output.innerHTML = "RBF Kernel Sigma: "+this.value;
+}
+slider.onmouseup = function() {
     if(start1==true){
         sm = createSVM(features);
         ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
@@ -177,18 +222,19 @@ slider.oninput = function() {
                 }
             }
         }
+        document.getElementById("status").innerHTML = "Converged after: "+sm.limit + " iterations";    
 }
 function createSVM(features){
     var that = {};
     var svm = new SVM;
-    svm.train(features, labels, {kernel: "rbf", C:10, sigma: slider.value});
+    svm.train(features, labels, {kernel: kernel, C:10, sigma: slider.value});
     var weights = svm.getallW();
-    var updateforx = Math.floor(weights.length/20);
-    if(weights.length <= 20){
+    console.log(weights);
+    // console.log(svm.predict(features))
+    var updateforx = Math.floor(weights.length/10);
+    if(weights.length <= 10){
         updateforx = 1;
     }
-    var tickperframe = 1;
-    var tickcount = 0;
     var x = 0;
     var weights = svm.getallW();
     var alphas = svm.getallAlpha();
@@ -220,17 +266,13 @@ function createSVM(features){
     }
 
     that.update = function(){
-        tickcount+=1;
-        if(tickcount > tickperframe){
-            tickcount = 0;
-            if(that.x >= that.limit - 1 ){
-                that.x+=updateforx;
-            }else if(that.x + updateforx > that.limit - 1){
-                that.x = that.limit-1;
-            }
-            else{
+        if(that.x >= that.limit - 1 ){
             that.x+=updateforx;
-            }
+        }else if(that.x + updateforx > that.limit - 1){
+            that.x = that.limit-1;
+        }
+        else{
+        that.x+=updateforx;
         }
     }
     return that;

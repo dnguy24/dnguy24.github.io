@@ -16,10 +16,15 @@
     <button onclick="create()" id="startsvm">SVM</button>
     <button onclick="clearcanvas()" id="clear">Clear</button>
     <p id="demo"></p>
+    <select id="kernelselection">
+        <option value="rbf">RBF Kernel</option>
+      <option value="linear">Linear Kernel</option>
+    </select>
   </div>
   <div class="slidecontainer">
-    <input type="range" min="10" max="50" value="27" class="slider" id="myRange">
+    <input type="range" min="10" max="100" value="50" class="slider" id="myRange">
     <p id="demo1"></p>
+    <p id="status"></p>
   </div>
     
     <script type="text/javascript" src="js/svm.js"></script>

@@ -1,6 +1,6 @@
 var SVM = function(){
     this.dit = function(){
-        console.log("test");
+        // console.log("test");
     }
     this.train = function(features, labels, options){
         if(features.length != labels.length){
@@ -12,14 +12,14 @@ var SVM = function(){
         var C = options.C || 0.1;
         var tol = options.tol || 1e-7;
         var max_passes = options.max_passes || 10;
-        this.kernel = "linear";
+        this.kernel = this.linear;
         if("kernel" in options){
             if(options.kernel == "linear"){
-                this.kernel = "linear";
+                this.kernel = this.linear;
             }
             else if(options.kernel == "rbf"){
                 this.sigma = options.sigma || 5;
-                this.kernel = "rbf";
+                this.kernel = this.rbf;
             }
         }
         this.M = features.length;
@@ -33,8 +33,16 @@ var SVM = function(){
         this.allalpha = allalpha;
         allalpha.push(this.alpha);
         allw.push(this.getWeights())
-        var maxiter = 10000;
+        var maxiter = 100000;
         var iter = 0;
+        
+        this.kernelResults = new Array(this.M);
+        for (var i=0;i<this.M;i++) {
+          this.kernelResults[i] = new Array(this.M);
+          for (var j=0;j<this.M;j++) {
+            this.kernelResults[i][j] = this.kernel(this.features[i],this.features[j]);
+        }
+    }
         while(passes < max_passes && iter <= maxiter){
             var num_changed_alphas = 0;
             for(var i = 0; i < this.M; i++){
@@ -57,10 +65,10 @@ var SVM = function(){
                         L = Math.max(0, ai + aj - C);
                         H = Math.min(C, ai + aj);
                     }
-                    if(Math.abs(L-H) < 1e-5){
+                    if(Math.abs(L-H) < 1e-7){
                         continue;
                     }
-                    var eta = 2*this.calculatekernel(this.features[i], this.features[j]) - this.calculatekernel(this.features[i], this.features[i]) - this.calculatekernel(this.features[j], this.features[j]);
+                    var eta = 2*this.calculatekernel(i, j) - this.calculatekernel(i, i) - this.calculatekernel(j, j);
                     if(eta >= 0) continue;
                     var newaj = aj - this.labels[j]*(Ei - Ej)/eta;
                     if(newaj >= H) newaj = H;
@@ -69,8 +77,8 @@ var SVM = function(){
                     this.alpha[j] = newaj;
                     var newai = ai + this.labels[i]*this.labels[j]*(aj -newaj);
                     this.alpha[i] = newai;
-                    var b1 = this.b - Ei - labels[i]*(newai - ai)*this.calculatekernel(this.features[i], this.features[i]) - labels[j]*(newaj - aj)*this.calculatekernel(this.features[i], this.features[j]);
-                    var b2 = this.b - Ej - labels[j]*(newai - ai)*this.calculatekernel(this.features[i], this.features[j]) - labels[j]*(newaj - aj)*this.calculatekernel(this.features[j], this.features[j]);
+                    var b1 = this.b - Ei - labels[i]*(newai - ai)*this.calculatekernel(i, i) - labels[j]*(newaj - aj)*this.calculatekernel(i, j);
+                    var b2 = this.b - Ej - labels[j]*(newai - ai)*this.calculatekernel(i, j) - labels[j]*(newaj - aj)*this.calculatekernel(j, j);
                     if(newai > 0 && newai < C) this.b = b1;
                     else if(newaj > 0 && newaj < C) this.b = b2;
                     b = (b1+b2)/2;
@@ -90,7 +98,7 @@ var SVM = function(){
     this.testmarginOne = function(weight, alphas, inst){
         var f = weight.b;
         for(var i = 0; i < this.M; i++){
-            f += alphas[i] * this.labels[i] * this.calculatekernel(inst, this.features[i]);
+            f += alphas[i] * this.labels[i] * this.kernel(inst, this.features[i]);
         }
         return f;
     }
@@ -103,7 +111,7 @@ var SVM = function(){
     this.MarginOne = function(inst){
         var f = this.b;
         for(var i = 0; i < this.M; i++){
-            f+= this.alpha[i]*this.labels[i]*this.calculatekernel(inst, this.features[i]);
+            f+= this.alpha[i]*this.labels[i]*this.kernel(inst, this.features[i]);
         }
         return f
     }
@@ -135,13 +143,10 @@ var SVM = function(){
         return pred;
     }
     this.calculatekernel = function(x1, x2){
-        if(this.kernel == "rbf"){
-            return(this.rbf(x1, x2));
-        }else if(this.kernel == "linear"){
-            return(this.linear(x1,x2));
-        }else{
-            return(this.poly(x1,x2));
+        if (this.kernelResults) {
+            return this.kernelResults[x1][x2];
         }
+        return this.kernel(this.features[x1], this.features[x2])
     }
     this.rbf = function(x1, x2){
         var sigma = this.sigma;
