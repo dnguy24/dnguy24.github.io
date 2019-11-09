@@ -4,9 +4,9 @@ body {
   padding: 20px;
 }
 h1 {
-  font-style: italic;
-
-  color: black;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 30px;
+  color: purple;
 }
 button
 {
@@ -14,7 +14,7 @@ button
 	display:inline-block;
 	border-radius:13px;
 	height:30px;
-	width:150px;
+	width:180px;
 	font-size:12px;
 }
 p {

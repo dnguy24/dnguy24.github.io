@@ -15,20 +15,20 @@ var rect = c.getBoundingClientRect();
 var x = y = 0;
 var lastmouseX = lastmouseY = 0;
 var features = [
-    [207, 72],
-    [446, 305],
-    [318, 202],
-    [189, 297],
-    [454, 121],
-    [147, 78],
-    [307, 73],
-    [200, 188],
-    [297, 251],
-    [364, 310],
-    [407, 167]
+    // [207, 72],
+    // [446, 305],
+    // [318, 202],
+    // [189, 297],
+    // [454, 121],
+    // [147, 78],
+    // [307, 73],
+    // [200, 188],
+    // [297, 251],
+    // [364, 310],
+    // [407, 167]
 ];
 var labels = [
-    -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1
+    // -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1
 ];
 var start1 = false;
 var start2 = false;
@@ -40,10 +40,10 @@ function update(){
     ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
     for(var i=0, len=features.length; i<len; i++){
         if(labels[i]==1){
-            console.log("drawing");
+            // console.log("drawing");
             drawCircle(features[i][0], features[i][1], "blue");
         }else if(labels[i]==-1){
-            console.log("drawing");
+            // console.log("drawing");
             drawCircle(features[i][0], features[i][1], "red");
         }
     }
@@ -86,11 +86,27 @@ function circledata(){
     }
     update();
 }
+function linearlyseparate(){
+    this.features = []
+    this.labels = []
+    for(var i =0; i < 77; i++){
+        var x = parseInt(Math.random()*c.clientWidth)
+        var y = parseInt(Math.random()*c.clientHeight)
+        this.features.push([x,y])
+    }
+    for(var i=0; i < 77; i++){
+        if((-5*this.features[i][0] + 300)>(-5*this.features[i][1])){
+            this.labels.push(-1);
+        }else{
+            this.labels.push(1);
+        }
+    }
+     update();
+}
 function clearcanvas(){
     console.log("clearing")
     stop = true;
     this.features = [];
-    console.log(features);
     this.labels = [];
     update();
 }
@@ -103,7 +119,7 @@ function start(button){
         }
         // circledata();
         update();
-        console.log(features);
+        // console.log(features);
         start1 = true;
         console.log("start: ", start1)
         button.innerText = "Stop";
@@ -229,7 +245,7 @@ function createSVM(features){
     var svm = new SVM;
     svm.train(features, labels, {kernel: kernel, C:10, sigma: slider.value});
     var weights = svm.getallW();
-    console.log(weights);
+    console.log(weights.length);
     // console.log(svm.predict(features))
     var updateforx = Math.floor(weights.length/10);
     if(weights.length <= 10){

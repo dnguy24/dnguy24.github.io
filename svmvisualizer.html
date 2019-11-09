@@ -7,15 +7,19 @@
   </head>
   <body>
   <div>
-    <h1 id="header">Press Start to Begin Drawing</h1>
-    <canvas height="400" width="600" id="mycanvas"></canvas>
+    <h1 id="header">Choose data type or press Start to begin creating new data points, change color to change the label</h1>
+    <button onclick="linearlyseparate()">Random data (for both kernels)</button>
+    <button onclick="circledata()">Random Circle (for RBF)</button>
   </div>
   <div>
-    <button onclick="changedrawing()" id="button">Change Color</button>
-    <button onclick="start(this)" id="button3">Start</button>
-    <button onclick="create()" id="startsvm">SVM</button>
-    <button onclick="clearcanvas()" id="clear">Clear</button>
-    <p id="demo"></p>
+      <canvas height="400" width="600" id="mycanvas"></canvas>
+  </div>
+  <div>
+      <button onclick="start(this)" id="button3">Start</button>
+      <button onclick="changedrawing()" id="button">Change Color</button>
+      <button onclick="clearcanvas()" id="clear">Clear</button>
+      <button onclick="create()" id="startsvm">SVM</button>
+      <p id="demo"></p>
     <select id="kernelselection">
         <option value="rbf">RBF Kernel</option>
       <option value="linear">Linear Kernel</option>
