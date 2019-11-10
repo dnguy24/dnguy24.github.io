@@ -64,7 +64,7 @@ dropdown.oninput = function(){
 function circledata(){
     this.features = []
     this.labels = []
-    for(var i=0; i < 100; i++){
+    for(var i=0; i < 50; i++){
         var radius = Math.random()*60;
         var angle = Math.random()*Math.PI*2;
         var x = parseInt(Math.cos(angle)*radius);
@@ -75,7 +75,7 @@ function circledata(){
         labels.push(-1);
     }
     for(var i=0; i < 50; i++){
-        var radius = Math.random()*30+100;
+        var radius = Math.random()*30+85;
         var angle = Math.random()*Math.PI*2;
         var x = parseInt(Math.cos(angle)*radius);
         var y = parseInt(Math.sin(angle)*radius);
@@ -84,7 +84,18 @@ function circledata(){
         features.push([x, y])
         labels.push(1);
     }
+    for(var i=0; i < 50; i++){
+        var radius = Math.random()*30+150;
+        var angle = Math.random()*Math.PI*2;
+        var x = parseInt(Math.cos(angle)*radius);
+        var y = parseInt(Math.sin(angle)*radius);
+        x+=c.clientWidth/2;
+        y+=c.clientHeight/2;
+        features.push([x, y])
+        labels.push(-1);
+    }
     update();
+    document.getElementById("header").innerHTML = "Choose the SVM kernel type and press SVM to run visualization"
 }
 function linearlyseparate(){
     this.features = []
@@ -102,6 +113,7 @@ function linearlyseparate(){
         }
     }
      update();
+     document.getElementById("header").innerHTML = "Choose the SVM kernel type and press SVM to run visualization";
 }
 function clearcanvas(){
     console.log("clearing")
@@ -123,7 +135,7 @@ function start(button){
         start1 = true;
         console.log("start: ", start1)
         button.innerText = "Stop";
-        document.getElementById("header").innerHTML = "Change the kernel sigma and press Start"
+        document.getElementById("header").innerHTML = "Choose the SVM kernel type and press SVM to run visualization"
         start2 = true;
     }else{
         stop = true;

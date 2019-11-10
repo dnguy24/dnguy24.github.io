@@ -13,9 +13,11 @@ var SVM = function(){
         var tol = options.tol || 1e-7;
         var max_passes = options.max_passes || 10;
         this.kernel = this.linear;
+        this.threshold = 1e-2
         if("kernel" in options){
             if(options.kernel == "linear"){
                 this.kernel = this.linear;
+                this.threshold = 1e-5
             }
             else if(options.kernel == "rbf"){
                 this.sigma = options.sigma || 5;
@@ -73,7 +75,7 @@ var SVM = function(){
                     var newaj = aj - this.labels[j]*(Ei - Ej)/eta;
                     if(newaj >= H) newaj = H;
                     if(newaj <= L) newaj = L;
-                    if(Math.abs(aj - newaj) < 1e-5) continue;
+                    if(Math.abs(aj - newaj) < this.threshold) continue;
                     this.alpha[j] = newaj;
                     var newai = ai + this.labels[i]*this.labels[j]*(aj -newaj);
                     this.alpha[i] = newai;
