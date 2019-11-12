@@ -149,7 +149,7 @@ function start(button){
         }
     }
 }
-    c.addEventListener("click", function(e){
+    c.addEventListener("mousedown", function(e){
         if(start1==true){    
             x = parseInt(e.clientX-rect.left);
             y = parseInt(e.clientY-rect.top);
